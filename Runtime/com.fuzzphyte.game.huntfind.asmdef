@@ -5,10 +5,14 @@
         "Unity.TextMeshPro",
         "Unity.Splines",
         "com.fuzzphyte.utility",
+        "com.fuzzphyte.utility.fpsystem",
         "com.fuzzphyte.utility.analytics",
         "com.fuzzphyte.utility.edu",
         "com.fuzzphyte.systemevent",
-        "com.fuzzphyte.game"
+        "com.fuzzphyte.game",
+        "com.fuzzphyte.placement",
+        "com.fuzzphyte.tools",
+        "com.fuzzphyte.tools.connections"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
