@@ -1,48 +1,80 @@
 namespace FuzzPhyte.Game.HuntFind
 {
     using UnityEngine;
-    using FuzzPhyte.SystemEvent;
     using FuzzPhyte.Tools;
-    using FuzzPhyte.Tools.Connections;
     using FuzzPhyte.Placement.Interaction;
     public class FP_HuntWorldListener : MonoBehaviour
     {
+        [Header("Core Systems")]
         public FP_HuntFindRunner Runner;
         public FP_PlacementInteractionBehaviour PlacementBehaviour;
 
+        /// <summary>
+        /// JOHN
+        /// Could update this to be generic to FP_EquipmentBase, 
+        /// and introduce an IFPHuntEquipmentNotifier interface
+        /// </summary>
+        [Header("Misc. Equipment References")]
+        public FP_EquipmentMicrowave[] Microwaves;
         protected virtual void OnEnable()
         {
-            if (PlacementBehaviour != null)
-            {
-                PlacementBehaviour.singleClickEvent
-                    .AddListener(OnSingleClick);
-
-                PlacementBehaviour.doubleClickEvent
-                    .AddListener(OnDoubleClick);
-
-                PlacementBehaviour.dragEndSocketSuccessEvent
-                    .AddListener(OnSocketSuccess);
-
-                PlacementBehaviour.dragEndMovedLocationEvent
-                    .AddListener(OnMovedLocation);
-            }
+            SubscribePlacement();
+            SubscribeEquipment();
         }
 
         protected virtual void OnDisable()
         {
-            if (PlacementBehaviour != null)
+            UnsubscribePlacement();
+            UnsubscribeEquipment();
+        }
+        protected void SubscribePlacement()
+        {
+            if (PlacementBehaviour == null) return;
+
+            PlacementBehaviour.singleClickEvent
+                .AddListener(OnSingleClick);
+            PlacementBehaviour.doubleClickEvent
+                .AddListener(OnDoubleClick);
+
+            PlacementBehaviour.dragEndSocketSuccessEvent
+                .AddListener(OnSocketSuccess);
+        }
+        protected void UnsubscribePlacement()
+        {
+            if (PlacementBehaviour == null) return;
+
+            PlacementBehaviour.singleClickEvent
+                .RemoveListener(OnSingleClick);
+            PlacementBehaviour.doubleClickEvent
+                .RemoveListener(OnDoubleClick);
+
+            PlacementBehaviour.dragEndSocketSuccessEvent
+                .RemoveListener(OnSocketSuccess);
+        }
+        void SubscribeEquipment()
+        {
+            if (Microwaves == null) return;
+
+            foreach (var microwave in Microwaves)
             {
-                PlacementBehaviour.singleClickEvent
-                    .RemoveListener(OnSingleClick);
+                if (microwave == null) continue;
 
-                PlacementBehaviour.doubleClickEvent
-                    .RemoveListener(OnDoubleClick);
+                microwave.OnStarted.AddListener(OnMicrowaveStarted);
+                microwave.OnFinished.AddListener(OnMicrowaveFinished);
+                microwave.OnDoorOpen.AddListener(OnMicrowaveDoorOpened);
+            }
+        }
+        void UnsubscribeEquipment()
+        {
+            if (Microwaves == null) return;
 
-                PlacementBehaviour.dragEndSocketSuccessEvent
-                    .RemoveListener(OnSocketSuccess);
+            foreach (var microwave in Microwaves)
+            {
+                if (microwave == null) continue;
 
-                PlacementBehaviour.dragEndMovedLocationEvent
-                    .RemoveListener(OnMovedLocation);
+                microwave.OnStarted.RemoveListener(OnMicrowaveStarted);
+                microwave.OnFinished.RemoveListener(OnMicrowaveFinished);
+                microwave.OnDoorOpen.RemoveListener(OnMicrowaveDoorOpened);
             }
         }
         #region Click Recognition
@@ -76,6 +108,56 @@ namespace FuzzPhyte.Game.HuntFind
             {
                 Runner.RegisterCorrectAction();
             }
+        }
+
+        #endregion
+        #region Equipment Validation
+
+        void OnMicrowaveStarted(FP_EquipmentMicrowave microwave)
+        {
+            ValidateEquipmentAction(
+                microwave.name,
+                HuntEquipmentActionType.Started);
+        }
+
+        void OnMicrowaveFinished(FP_EquipmentMicrowave microwave)
+        {
+            ValidateEquipmentAction(
+                microwave.name,
+                HuntEquipmentActionType.Finished);
+        }
+
+        void OnMicrowaveDoorOpened(FP_EquipmentMicrowave microwave)
+        {
+            ValidateEquipmentAction(
+                microwave.name,
+                  HuntEquipmentActionType.DoorOpened);
+        }
+
+        void ValidateEquipmentAction(string equipmentID, HuntEquipmentActionType actionType)
+        {
+            if (Runner.CurrentObjective == null)
+                return;
+
+            var objective = Runner.CurrentObjective.ObjectiveData;
+
+            // Must be an Action objective
+            if (objective.Type != HuntObjectiveType.Action)
+                return;
+
+            // Equipment must match
+            if (!objective.ValidIDs.Contains(equipmentID))
+                return;
+
+            // Action type must match
+            if (objective.RequiredAction != actionType)
+                return;
+
+            Debug.Log(
+                $"[HuntFind] Equipment Action Matched: {equipmentID} -> {actionType}"
+            );
+
+            Runner.RegisterCorrectAction();
         }
 
         #endregion

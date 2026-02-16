@@ -17,6 +17,8 @@ namespace FuzzPhyte.Game.HuntFind
         public HuntMatchMode MatchMode = HuntMatchMode.SpecificID;
         public List<string> ValidIDs = new List<string>();
         public List<string> ValidTags = new List<string>();
+        [Header("Action Objective Settings")]
+        public HuntEquipmentActionType RequiredAction = HuntEquipmentActionType.None;
 
         [Header("Multi-Step Destination")]
         public string SecondaryID;
