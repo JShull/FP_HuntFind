@@ -14,6 +14,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [@JShull](https://github.com/jshull).
   - Moved all test files to a Unity Package Distribution
   - Setup the ChangeLog.md
+  - FPGameManager_HuntFind.cs
+  - FP_HuntWorldListener.cs
+  - FP_HuntFindObjectiveUI.cs
+  - FP_HuntFindRunner.cs
+  - FP_HuntObjectiveState.cs
+  - HuntEquipmentActionType enum
+  - HuntMatchMode enum
+  - HuntObjective ScriptableObject FP_Data Extension
+  - HuntObjectiveType enum
   
 ### 0.1.0 Changed
 
