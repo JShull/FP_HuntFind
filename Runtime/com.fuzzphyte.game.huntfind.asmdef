@@ -1,0 +1,22 @@
+{
+    "name": "com.fuzzphyte.game.huntfind",
+    "rootNamespace": "FuzzPhyte.Game.HuntFind",
+    "references": [
+        "Unity.TextMeshPro",
+        "Unity.Splines",
+        "com.fuzzphyte.utility",
+        "com.fuzzphyte.utility.analytics",
+        "com.fuzzphyte.utility.edu",
+        "com.fuzzphyte.systemevent",
+        "com.fuzzphyte.game"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": true,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

@@ -1,0 +1,38 @@
+{
+    "name": "com.fuzzphyte.game.huntfind",
+    "version": "0.1.0",
+    "displayName": "FP HuntFind",
+    "description": "FP HuntFind is a FuzzPhyte package for Unity to link and bring together other libraries to build a simple hunt and find game.",
+    "unity": "6000.3",
+    "unityRelease": "5f1",
+    "documentationUrl": "https://github.com/JShull/FP_HuntFind/blob/main/README.md",
+    "changelogUrl": "https://github.com/JShull/FP_HuntFind/blob/main/CHANGELOG.md",
+    "licensesUrl": "https://github.com/JShull/FP_HuntFind/blob/main/LICENSE.md",
+    "repository": {
+      "type": "git",
+      "url": "https://github.com/JShull/FP_HuntFind.git"
+    },
+    "dependencies": {
+      "com.unity.textmeshpro": "3.0.9",
+      "com.unity.splines":"2.8.1",
+      "com.unity.timeline":"1.8.9"
+    },
+    "samples": [
+      {
+        "displayName": "Base Hunt and Find Setup",
+        "description": "Core Hunt and Find Scriptable objects to showcase how to leverage FP_Vocabulary within the context of a hunt and find game.",
+        "path": "Samples~/HuntFindGame"
+      }
+    ],
+    "keywords": [
+      "ScriptableObject",
+      "FuzzPhyte",
+      "Game"
+    ],
+    "author": {
+      "name": "John Shull",
+      "email": "the.john.shull@gmail.com",
+      "url": "https://github.com/jshull"
+    },
+    "type": "game"
+  }
