@@ -83,6 +83,7 @@ namespace FuzzPhyte.Game.HuntFind
             PlacementObjectComponent obj,
             FP_PlacementSocketComponent socket)
         {
+            Debug.LogWarning($"Single click listener: {obj.name} with socket?");
             ValidateRecognition(obj);
         }
 
@@ -92,7 +93,7 @@ namespace FuzzPhyte.Game.HuntFind
         {
             ValidateRecognition(obj);
         }
-
+        #region Validation Methods
         private void ValidateRecognition(PlacementObjectComponent obj)
         {
             if (Runner.CurrentObjective == null) return;
@@ -102,14 +103,83 @@ namespace FuzzPhyte.Game.HuntFind
             if (objective.Type != HuntObjectiveType.Recognition)
                 return;
 
-            string objectID = obj.name; // or your custom ID source
-
-            if (objective.ValidIDs.Contains(objectID))
+            // need to use our match type now to determine if we should be checking ID, tag, or category
+            bool isValid = false;
+            switch(objective.MatchMode)
+            {
+                case HuntMatchMode.AnyOfIDs:
+                    isValid=ValidateRecognitionByID(obj, Runner.CurrentObjective);
+                    break;
+                case HuntMatchMode.ByTag:
+                    isValid=ValidateRecognitionByTag(obj, Runner.CurrentObjective);
+                    break;
+                case HuntMatchMode.ByCategory:
+                    isValid=ValidateRecognitionByCategory(obj, Runner.CurrentObjective);
+                    break;
+            }
+            if (isValid)
             {
                 Runner.RegisterCorrectAction();
             }
         }
+        /// <summary>
+        /// ID uses gameobject name
+        /// </summary>
+        /// <param name="placementOBJ"></param>
+        /// <param name="huntOBJ"></param>
+        /// <returns></returns>
+        private bool ValidateRecognitionByID(PlacementObjectComponent placementOBJ,FP_HuntObjectiveState huntOBJ)
+        {
+            for(int i=0;i< huntOBJ.ObjectiveData.ValidIDs.Count; i++)
+            {
+                var id = huntOBJ.ObjectiveData.ValidIDs[i];
+                if (placementOBJ.name == id)
+                {
+                     return true;
+                }
+            }
+            return false;
+        }
+        /// <summary>
+        /// Using Unity Tag System, check our huntOBJ valid tags against the tag of the placement object
+        /// </summary>
+        /// <param name="placementOBJ"></param>
+        /// <param name="huntOBJ"></param>
+        /// <returns></returns>
+        private bool ValidateRecognitionByTag(PlacementObjectComponent placementOBJ, FP_HuntObjectiveState huntOBJ)
+        {
+            for (int i = 0; i < huntOBJ.ObjectiveData.ValidTags.Count; i++)
+            {
+                var tag = huntOBJ.ObjectiveData.ValidTags[i];
+                if (placementOBJ.CompareTag(tag))
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+        /// <summary>
+        /// Using our custom category system
+        /// </summary>
+        /// <param name="placementOBJ"></param>
+        /// <param name="huntOBJ"></param>
+        /// <returns></returns>
+        private bool ValidateRecognitionByCategory(PlacementObjectComponent placementOBJ, FP_HuntObjectiveState huntOBJ)
+        {
+            // looking for any singular match across two lists
 
+            for(int i=0;i< placementOBJ.PlacementData.Categories.Count; i++)
+            {
+                var category = placementOBJ.PlacementData.Categories[i];
+                if (huntOBJ.ObjectiveData.Categories.Contains(category))
+                {
+                    //Runner.RegisterCorrectAction();
+                    return true;
+                }
+            }
+            return false;
+        }
+        #endregion
         #endregion
         #region Equipment Validation
 
@@ -166,6 +236,7 @@ namespace FuzzPhyte.Game.HuntFind
             PlacementObjectComponent obj,
             FP_PlacementSocketComponent socket)
         {
+            Debug.LogWarning($"Socket Success: {obj.name} -> {socket.name}");
             if (Runner.CurrentObjective == null) return;
 
             var objective = Runner.CurrentObjective.ObjectiveData;

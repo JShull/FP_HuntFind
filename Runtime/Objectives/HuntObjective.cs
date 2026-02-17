@@ -4,6 +4,7 @@ namespace FuzzPhyte.Game.HuntFind
     using System.Collections.Generic;
     using FuzzPhyte.Utility;
     using FuzzPhyte.Utility.EDU;
+    using FuzzPhyte.Placement;
     [CreateAssetMenu(fileName = "HuntObjective", menuName = "FuzzPhyte/Game/HuntFind/HuntObjective")]
     public class HuntObjective : FP_Data
     {
@@ -15,6 +16,7 @@ namespace FuzzPhyte.Game.HuntFind
 
         [Header("Matching Rules")]
         public HuntMatchMode MatchMode = HuntMatchMode.SpecificID;
+        public List<PlacementCategory> Categories = new List<PlacementCategory>();
         public List<string> ValidIDs = new List<string>();
         public List<string> ValidTags = new List<string>();
         [Header("Action Objective Settings")]

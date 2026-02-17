@@ -8,6 +8,24 @@ namespace FuzzPhyte.Game.HuntFind
         public TextMeshProUGUI ObjectiveText;
         public AudioSource AudioSource;
 
+        public void OnEnable()
+        {
+            if (Runner != null)
+            {
+                Runner.OnObjectiveStarted += OnObjectiveStarted;
+            }
+        }
+        public void OnDisable()
+        {
+            if (Runner != null)
+            {
+                Runner.OnObjectiveStarted -= OnObjectiveStarted;
+            }
+        }
+        protected void OnObjectiveStarted(FP_HuntObjectiveState obj)
+        {
+            Refresh();
+        }
         public void Refresh()
         {
             if (Runner.CurrentObjective == null)
@@ -16,7 +34,7 @@ namespace FuzzPhyte.Game.HuntFind
             ObjectiveText.text =
                 Runner.CurrentObjective.Instruction;
         }
-
+        [ContextMenu("Play Objective Audio")]
         public void OnObjectiveClicked()
         {
             Runner.PhrasePlayed();

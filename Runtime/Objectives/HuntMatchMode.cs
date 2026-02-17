@@ -6,6 +6,7 @@ namespace FuzzPhyte.Game.HuntFind
         NA,
         SpecificID,
         AnyOfIDs,
-        ByTag
+        ByTag,
+        ByCategory
     }
 }
