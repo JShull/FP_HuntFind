@@ -33,6 +33,7 @@ namespace FuzzPhyte.Game.HuntFind
 
             ObjectiveText.text =
                 Runner.CurrentObjective.Instruction;
+            OnObjectiveClicked();
         }
         [ContextMenu("Play Objective Audio")]
         public void OnObjectiveClicked()
