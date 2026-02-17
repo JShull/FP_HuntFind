@@ -114,7 +114,7 @@ namespace FuzzPhyte.Game.HuntFind
                     isValid=ValidateRecognitionByTag(obj, Runner.CurrentObjective);
                     break;
                 case HuntMatchMode.ByCategory:
-                    isValid=ValidateRecognitionByCategory(obj, Runner.CurrentObjective);
+                    isValid=ValidateRecognitionByCategory(obj, Runner.CurrentObjective,null);
                     break;
             }
             if (isValid)
@@ -130,12 +130,13 @@ namespace FuzzPhyte.Game.HuntFind
         /// <returns></returns>
         private bool ValidateRecognitionByID(PlacementObjectComponent placementOBJ,FP_HuntObjectiveState huntOBJ)
         {
-            for(int i=0;i< huntOBJ.ObjectiveData.ValidIDs.Count; i++)
+           
+            for (int i = 0; i < huntOBJ.ObjectiveData.ValidIDs.Count; i++)
             {
                 var id = huntOBJ.ObjectiveData.ValidIDs[i];
                 if (placementOBJ.name == id)
                 {
-                     return true;
+                    return true;
                 }
             }
             return false;
@@ -164,19 +165,42 @@ namespace FuzzPhyte.Game.HuntFind
         /// <param name="placementOBJ"></param>
         /// <param name="huntOBJ"></param>
         /// <returns></returns>
-        private bool ValidateRecognitionByCategory(PlacementObjectComponent placementOBJ, FP_HuntObjectiveState huntOBJ)
+        private bool ValidateRecognitionByCategory(PlacementObjectComponent placementOBJ, FP_HuntObjectiveState huntOBJ, FP_PlacementSocketComponent socketOBJ)
         {
             // looking for any singular match across two lists
-
-            for(int i=0;i< placementOBJ.PlacementData.Categories.Count; i++)
+            if (socketOBJ != null)
             {
-                var category = placementOBJ.PlacementData.Categories[i];
-                if (huntOBJ.ObjectiveData.Categories.Contains(category))
+                //socket based category matching for multi-step objectives
+                for (int i = 0; i < placementOBJ.PlacementData.Categories.Count; i++)
                 {
-                    //Runner.RegisterCorrectAction();
-                    return true;
+                    var category = placementOBJ.PlacementData.Categories[i];
+                    if (socketOBJ.AllowedCategories.Count > 0)
+                    {
+                        for(int j=0;j< socketOBJ.AllowedCategories.Count; j++)
+                        {
+                            var socketCategory = socketOBJ.AllowedCategories[j];
+                            if (category == socketCategory)
+                            {
+                                return true;
+                            }
+                        }
+                    }
+                }
+                return false;
+            }
+            else
+            {
+                for (int i = 0; i < placementOBJ.PlacementData.Categories.Count; i++)
+                {
+                    var category = placementOBJ.PlacementData.Categories[i];
+                    if (huntOBJ.ObjectiveData.Categories.Contains(category))
+                    {
+                        //Runner.RegisterCorrectAction();
+                        return true;
+                    }
                 }
             }
+                
             return false;
         }
         #endregion
@@ -232,15 +256,40 @@ namespace FuzzPhyte.Game.HuntFind
 
         #endregion
         #region Placement System
+        /// <summary>
+        /// Mainly for Action and possibly Multistep objectives, currently filtering for Actions
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="socket"></param>
         private void OnSocketSuccess(
             PlacementObjectComponent obj,
             FP_PlacementSocketComponent socket)
         {
             Debug.LogWarning($"Socket Success: {obj.name} -> {socket.name}");
-            if (Runner.CurrentObjective == null) return;
-
+            if (Runner.CurrentObjective == null || socket==null) return;
+           
             var objective = Runner.CurrentObjective.ObjectiveData;
+            //var objective = socket;
 
+
+            if (objective.Type != HuntObjectiveType.Action)
+                return;
+
+            // need to use our match type now to determine if we should be checking ID, tag, or category
+            bool isValid = false;
+            switch (objective.MatchMode)
+            {
+                case HuntMatchMode.ByCategory:
+                    isValid = ValidateRecognitionByCategory(obj, null,socket);
+                    break;
+            }
+            if (isValid)
+            {
+                Runner.RegisterCorrectAction();
+            }
+
+            //
+            /*
             if (objective.Type != HuntObjectiveType.Multistep)
                 return;
 
@@ -258,6 +307,7 @@ namespace FuzzPhyte.Game.HuntFind
             {
                 Runner.RegisterCorrectAction();
             }
+            */
         }
 
         private void OnMovedLocation(
