@@ -1,7 +1,8 @@
 namespace FuzzPhyte.Game.HuntFind
 {
-    using Mono.Cecil.Cil;
+    using System.Collections;
     using UnityEngine;
+    using UnityEngine.Events;
     /// <summary>
     /// Runtime-only state container for a HuntObjective.
     /// Unity Component side of managing our data using the HuntObjective SO
@@ -10,6 +11,7 @@ namespace FuzzPhyte.Game.HuntFind
     {
         [SerializeField] protected HuntObjective objectiveData;
         public HuntObjective ObjectiveData => objectiveData;
+        public AudioSource InstructionAudioSource;
         [Tooltip("What we want to display for our instructions")]
         public string Instruction = "No Instructions";
         public int CurrentCount { get; protected set; } = 0;
@@ -18,6 +20,7 @@ namespace FuzzPhyte.Game.HuntFind
         [SerializeField] protected int requiredCount =1;
         public bool HasPlayedOnce { get; protected set; } = false;
         public bool IsCompleted { get; protected set; } = false;
+        public UnityEvent AfterInstructionFinishedEvent;
         public void Initialize(HuntObjective objective, string instructions ="No Instructions",int requiredAmount=1)
         {
             objectiveData = objective;
@@ -51,6 +54,22 @@ namespace FuzzPhyte.Game.HuntFind
         public void Complete()
         {
             IsCompleted = true;
+        }
+        /// <summary>
+        /// Plays Audio for the instruction if it exists. Can be called by the runner or other systems to trigger audio when needed.
+        /// </summary>
+        public void PlayInstructionAudio()
+        {
+            if (InstructionAudioSource == null) return;
+            if (objectiveData.Instruction == null) return;
+            if (objectiveData.Instruction.WordAudio.AudioClip == null) return;
+            InstructionAudioSource.PlayOneShot(objectiveData.Instruction.WordAudio.AudioClip);
+            StartCoroutine(AfterAudioPlayedEvent(objectiveData.Instruction.WordAudio.AudioClip.length+0.25f));
+        }
+        IEnumerator AfterAudioPlayedEvent(float value)
+        {
+            yield return new WaitForSeconds(value);
+            AfterInstructionFinishedEvent?.Invoke();
         }
     }
 }
