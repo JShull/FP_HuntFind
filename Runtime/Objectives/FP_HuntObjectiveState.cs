@@ -46,6 +46,10 @@ namespace FuzzPhyte.Game.HuntFind
 
             if (CurrentCount >= RequiredCount)
             {
+                if (!IsCompleted)
+                {
+                    OnCompletionEventFirstTime?.Invoke();
+                }
                 IsCompleted = true;
                 return true;
             }
