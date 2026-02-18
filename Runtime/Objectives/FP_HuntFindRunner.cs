@@ -1,6 +1,7 @@
 namespace FuzzPhyte.Game.HuntFind
 {
     using UnityEngine;
+    using UnityEngine.Events;
     using FuzzPhyte.SystemEvent;
     using FuzzPhyte.Utility.EDU;
     public class FP_HuntFindRunner : MonoBehaviour
@@ -11,20 +12,14 @@ namespace FuzzPhyte.Game.HuntFind
         public delegate void HuntObjectiveDelegate(FP_HuntObjectiveState obj);
         public event HuntObjectiveDelegate OnObjectiveStarted;
         public event HuntObjectiveDelegate OnObjectiveCompleted;
-
+        public UnityEvent OnCorrectActionPerformed;
         public void StartObjective(FP_HuntObjectiveState objective)
         {
             CurrentObjective = objective;
 
             OnObjectiveStarted?.Invoke(objective);
         }
-        public void CompleteObjective()
-        {
-            if (CurrentObjective == null) return;
-
-            CurrentObjective.Complete();
-            OnObjectiveCompleted?.Invoke(CurrentObjective);
-        }
+        
         public void PhrasePlayed()
         {
             if (CurrentObjective == null)
@@ -59,6 +54,14 @@ namespace FuzzPhyte.Game.HuntFind
             {
                 CompleteObjective();
             }
+            OnCorrectActionPerformed?.Invoke();
+        }
+        public void CompleteObjective()
+        {
+            if (CurrentObjective == null) return;
+
+            CurrentObjective.Complete();
+            OnObjectiveCompleted?.Invoke(CurrentObjective);
         }
     }
 }
