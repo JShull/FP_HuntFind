@@ -2,6 +2,8 @@ namespace FuzzPhyte.Game.HuntFind
 {
     using UnityEngine;
     using System.Collections.Generic;
+    using System.Collections;
+    using UnityEngine.Events;
     using FuzzPhyte.SystemEvent;
     public class FPGameManager_HuntFind : FPGenericGameUtility
     {
@@ -10,9 +12,12 @@ namespace FuzzPhyte.Game.HuntFind
 
         [Tooltip("All objectives in order (linear progression)")]
         public List<FP_HuntObjectiveState> ObjectiveSequence = new List<FP_HuntObjectiveState>();
-
+        public float DelayBeforeNextObjective = 2f;
+        protected bool pastFirstObjective = false;
         protected FP_HuntObjectiveState currentStateInstance;
         protected int currentIndex = 0;
+        [Tooltip("Event is triggered right at 0, we then use the delay to start the next objective")]
+        public UnityEvent BeforeNextObjective;
 
         // ---------------------------------------------------
         // FP_Game Lifecycle
@@ -53,10 +58,24 @@ namespace FuzzPhyte.Game.HuntFind
             }
 
             currentStateInstance = ObjectiveSequence[currentIndex];
-
+            BeforeNextObjective?.Invoke();
+            if (!pastFirstObjective)
+            {
+                HuntRunner.StartObjective(currentStateInstance);
+                Debug.Log($"Started Objective #{currentIndex + 1}: {currentStateInstance.Instruction}");
+                pastFirstObjective = true;
+            }
+            else
+            {
+                StartCoroutine(DelayNextObjective());
+                Debug.Log($"Started Objective #{currentIndex + 1}: {currentStateInstance.Instruction}");
+            }
+           
+        }
+        IEnumerator DelayNextObjective()
+        {
+            yield return new WaitForSecondsRealtime(DelayBeforeNextObjective);
             HuntRunner.StartObjective(currentStateInstance);
-
-            Debug.Log($"Started Objective #{currentIndex + 1}: {currentStateInstance.Instruction}");
         }
         #endregion
 
