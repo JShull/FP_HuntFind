@@ -81,7 +81,8 @@ namespace FuzzPhyte.Game.HuntFind
 
         private void OnSingleClick(
             PlacementObjectComponent obj,
-            FP_PlacementSocketComponent socket)
+            FP_PlacementSocketComponent socket,
+            Vector3 worldPos)
         {
             Debug.LogWarning($"Single click listener: {obj.name} with socket?");
             ValidateRecognition(obj);
@@ -89,7 +90,8 @@ namespace FuzzPhyte.Game.HuntFind
 
         private void OnDoubleClick(
             PlacementObjectComponent obj,
-            FP_PlacementSocketComponent socket)
+            FP_PlacementSocketComponent socket,
+            Vector3 worldPos)
         {
             ValidateRecognition(obj);
         }
@@ -263,7 +265,8 @@ namespace FuzzPhyte.Game.HuntFind
         /// <param name="socket"></param>
         private void OnSocketSuccess(
             PlacementObjectComponent obj,
-            FP_PlacementSocketComponent socket)
+            FP_PlacementSocketComponent socket, 
+            Vector3 worldPos)
         {
             Debug.LogWarning($"Socket Success: {obj.name} -> {socket.name}");
             if (Runner.CurrentObjective == null || socket==null) return;
