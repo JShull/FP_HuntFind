@@ -12,6 +12,7 @@ namespace FuzzPhyte.Game.HuntFind
         [SerializeField] protected HuntObjective objectiveData;
         public HuntObjective ObjectiveData => objectiveData;
         public AudioSource InstructionAudioSource;
+        public bool SetInstructionFromVocabOnAwake = false;
         [Tooltip("What we want to display for our instructions")]
         public string Instruction = "No Instructions";
         public int CurrentCount { get; protected set; } = 0;
@@ -22,12 +23,23 @@ namespace FuzzPhyte.Game.HuntFind
         public bool IsCompleted { get; protected set; } = false;
         public UnityEvent AfterInstructionFinishedEvent;
         public UnityEvent OnCompletionEventFirstTime;
+        public void Awake()
+        {
+            if(SetInstructionFromVocabOnAwake)
+            {
+                SetInstructionFromVocab();
+            }
+        }
         public void Initialize(HuntObjective objective, string instructions ="No Instructions",int requiredAmount=1)
         {
             objectiveData = objective;
             requiredCount = requiredAmount;
             Instruction= instructions;
             ResetData();
+        }
+        public void SetInstructionFromVocab()
+        {
+            Instruction = objectiveData.Instruction != null ? objectiveData.Instruction.Word : "No Instructions";
         }
         public void ResetData()
         {
