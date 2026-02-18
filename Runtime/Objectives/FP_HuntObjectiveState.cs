@@ -21,6 +21,7 @@ namespace FuzzPhyte.Game.HuntFind
         public bool HasPlayedOnce { get; protected set; } = false;
         public bool IsCompleted { get; protected set; } = false;
         public UnityEvent AfterInstructionFinishedEvent;
+        public UnityEvent OnCompletionEventFirstTime;
         public void Initialize(HuntObjective objective, string instructions ="No Instructions",int requiredAmount=1)
         {
             objectiveData = objective;
@@ -53,6 +54,10 @@ namespace FuzzPhyte.Game.HuntFind
 
         public void Complete()
         {
+            if (!IsCompleted)
+            {
+                OnCompletionEventFirstTime?.Invoke();
+            }
             IsCompleted = true;
         }
         /// <summary>
