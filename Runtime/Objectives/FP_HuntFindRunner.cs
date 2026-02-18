@@ -48,7 +48,7 @@ namespace FuzzPhyte.Game.HuntFind
 
             var finished=CurrentObjective.IncrementProgress();
 
-            Debug.Log($"Progress: {CurrentObjective.CurrentCount}/{CurrentObjective.RequiredCount}");
+            Debug.Log($"Done? {finished} Progress: {CurrentObjective.CurrentCount}/{CurrentObjective.RequiredCount}");
 
             if (finished)
             {
