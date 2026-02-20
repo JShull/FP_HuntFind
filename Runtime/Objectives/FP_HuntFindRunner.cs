@@ -7,7 +7,7 @@ namespace FuzzPhyte.Game.HuntFind
     public class FP_HuntFindRunner : MonoBehaviour
     {
         [Header("Active Objective")]
-        public FP_HuntObjectiveState CurrentObjective { get; protected set; } = null;
+        public FP_HuntObjectiveState CurrentObjective;
 
         public delegate void HuntObjectiveDelegate(FP_HuntObjectiveState obj);
         public event HuntObjectiveDelegate OnObjectiveStarted;
@@ -16,7 +16,6 @@ namespace FuzzPhyte.Game.HuntFind
         public void StartObjective(FP_HuntObjectiveState objective)
         {
             CurrentObjective = objective;
-
             OnObjectiveStarted?.Invoke(objective);
         }
         
