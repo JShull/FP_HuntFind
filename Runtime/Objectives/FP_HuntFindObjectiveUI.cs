@@ -27,6 +27,7 @@ namespace FuzzPhyte.Game.HuntFind
     {
         public FP_HuntFindRunner Runner;
         public TextMeshProUGUI ObjectiveText;
+        public Button ObjectiveButton;
         public AudioSource AudioSource;
         protected Coroutine animationCoroutine;
         public Image ActionIconRef;
@@ -34,11 +35,8 @@ namespace FuzzPhyte.Game.HuntFind
         public List<Image>OtherPanelRefs = new List<Image>();
         [Space]
         [Header("Icons")]
-        //public GameObject HuntTypeActionIcon;
-        //public GameObject HuntTypeRecognitionIcon;
-        //public GameObject HuntTypeMultiStepIcon;
         public List<HuntFindUIInfo> HuntUIItems = new List<HuntFindUIInfo>();
-        
+        public HuntFindUIInfo ActiveUIDetails;
         public void OnEnable()
         {
             if (Runner != null)
@@ -77,6 +75,7 @@ namespace FuzzPhyte.Game.HuntFind
                 if (item.UniqueID == result.UniqueID)
                 {
                     //set the color and sprite
+                    ActiveUIDetails=item;
                     ActionIconRef.sprite = item.UIIcon;
                     ActionIconRef.color = item.UIColor;
                     for(int j=0;j< OtherPanelRefs.Count; j++)
@@ -85,7 +84,22 @@ namespace FuzzPhyte.Game.HuntFind
                         otherPanel.color = item.UIBackgroundColor;
                     }
                     ActionIconBackgroundRef.color = item.UIBackgroundColor;
-                    
+                    if (ObjectiveText != null)
+                    {
+                        ObjectiveText.color = item.UIBackgroundColor;
+                    }
+                    if (ObjectiveButton != null)
+                    {
+                        //hover button color inverse of UIBackgroundColor
+                        ObjectiveButton.colors = new ColorBlock
+                        {
+                            normalColor = ObjectiveButton.colors.normalColor,
+                            highlightedColor = InvertColor(item.UIBackgroundColor),
+                            pressedColor = ObjectiveButton.colors.pressedColor,
+                            selectedColor = ObjectiveButton.colors.selectedColor,
+                            disabledColor = ObjectiveButton.colors.disabledColor,
+                        };
+                    }
                     if (item.AnimatorUIRef != null)
                     {
                         item.AnimatorUIRef.enabled = true;
@@ -107,6 +121,15 @@ namespace FuzzPhyte.Game.HuntFind
             }
 
             OnObjectiveClicked();
+        }
+        public static Color InvertColor(Color color)
+        {
+            // Subtract each color channel from 1.0
+            color.r = 1.0f - color.r;
+            color.g = 1.0f - color.g;
+            color.b = 1.0f - color.b;
+            // Keep the original alpha value
+            return color;
         }
         protected IEnumerator AnimationCoroutine(HuntFindUIInfo anim)
         {
