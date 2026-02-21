@@ -174,7 +174,8 @@ namespace FuzzPhyte.Game.HuntFind
             if (NumberIndexRef == null) return;
             NumberIndexRef.text = index.ToString() + NumberIndexGapDetails + maxOut.ToString();
             if (NumberIndexFillRef == null) return;
-            float ratio = (float)index / (float)maxOut-1;
+            float ratio = (float)index*1f / (float)(maxOut-1f);
+            Debug.LogWarning($"{ratio} value for fill amount");
             if (ratio > 1)
             {
                 ratio = 1;
