@@ -115,7 +115,7 @@ namespace FuzzPhyte.Game.HuntFind
             }
             else
             {
-                Debug.LogError($"Requested some animation but it looks like we are missing an animator?! {anim.MainIcon.name}");
+                Debug.LogError($"Requested some animation but it looks like we are missing an animator?! ID={anim.UniqueID}");
             }
             animationCoroutine = null;
         }
