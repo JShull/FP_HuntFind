@@ -2,17 +2,40 @@ namespace FuzzPhyte.Game.HuntFind
 {
     using UnityEngine;
     using TMPro;
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+    using UnityEngine.UI;
+    using System.Collections;
+
+    [Serializable]
+    public struct HuntFindUIInfo
+    {
+        public int UniqueID;
+        public HuntObjectiveType HuntType;
+        //public GameObject MainIcon;
+        public Color UIColor;
+        public Sprite UIIcon;
+        public Animator AnimatorUIItem;
+        public Image AnimatorUIRef;
+        public string AnimationState;
+        public int AnimationLayer;
+        public float AnimationDuration;
+    }
     public class FP_HuntFindObjectiveUI : MonoBehaviour
     {
         public FP_HuntFindRunner Runner;
         public TextMeshProUGUI ObjectiveText;
         public AudioSource AudioSource;
+        protected Coroutine animationCoroutine;
+        public Image ActionIconRef;
         [Space]
         [Header("Icons")]
-        public GameObject HuntTypeActionIcon;
-        public GameObject HuntTypeRecognitionIcon;
-        public GameObject HuntTypeMultiStepIcon;
-      
+        //public GameObject HuntTypeActionIcon;
+        //public GameObject HuntTypeRecognitionIcon;
+        //public GameObject HuntTypeMultiStepIcon;
+        public List<HuntFindUIInfo> HuntUIItems = new List<HuntFindUIInfo>();
+        
         public void OnEnable()
         {
             if (Runner != null)
@@ -39,28 +62,62 @@ namespace FuzzPhyte.Game.HuntFind
             //set text
             ObjectiveText.text = Runner.CurrentObjective.Instruction;
             //set icon
-            if (HuntTypeActionIcon != null && HuntTypeRecognitionIcon != null && HuntTypeMultiStepIcon != null)
+            //pull info
+            if (HuntUIItems.Count <= 0) return;
+            //go through list and find a match for the type
+
+
+            //go through the list and find a match for the type
+            var result = HuntUIItems.FirstOrDefault(huntType => huntType.HuntType == Runner.CurrentObjective.ObjectiveData.Type);
+            for(int i = 0; i < HuntUIItems.Count; i++)
             {
-                switch (Runner.CurrentObjective.ObjectiveData.Type)
+                var item = HuntUIItems[i];
+                if (item.UniqueID == result.UniqueID)
                 {
-                    case HuntObjectiveType.Action:
-                        HuntTypeActionIcon.SetActive(true);
-                        HuntTypeRecognitionIcon.SetActive(false);
-                        HuntTypeMultiStepIcon.SetActive(false);
-                        break;
-                    case HuntObjectiveType.Recognition:
-                        HuntTypeActionIcon.SetActive(false);
-                        HuntTypeRecognitionIcon.SetActive(true);
-                        HuntTypeMultiStepIcon.SetActive(false);
-                        break;
-                    case HuntObjectiveType.Multistep:
-                        HuntTypeActionIcon.SetActive(false);
-                        HuntTypeRecognitionIcon.SetActive(false);
-                        HuntTypeMultiStepIcon.SetActive(true);
-                        break;
+                    //set the color and sprite
+                    ActionIconRef.sprite = item.UIIcon;
+                    ActionIconRef.color = item.UIColor;
+                    
+                    if (item.AnimatorUIRef != null)
+                    {
+                        item.AnimatorUIRef.color = item.AnimatorUIRef.color;
+                        item.AnimatorUIRef.enabled = true;
+                    }
+                    if (item.AnimatorUIItem != null)
+                    {
+                        item.AnimatorUIItem.Play(item.AnimationState, item.AnimationLayer);
+                        if (animationCoroutine != null)
+                        {
+                            StopCoroutine(animationCoroutine);
+                        }
+                        animationCoroutine = StartCoroutine(AnimationCoroutine(result));
+                    }
+                }
+                else
+                { 
+                    if (item.AnimatorUIRef != null)
+                    {
+                        item.AnimatorUIRef.enabled = false;
+                    }
                 }
             }
+
             OnObjectiveClicked();
+        }
+        protected IEnumerator AnimationCoroutine(HuntFindUIInfo anim)
+        {
+            yield return new WaitForSecondsRealtime(anim.AnimationDuration);
+            if (anim.AnimatorUIItem != null)
+            {
+                anim.AnimatorUIItem.StopPlayback();
+                anim.AnimatorUIItem.playbackTime = 0;
+                anim.AnimatorUIRef.enabled = false;
+            }
+            else
+            {
+                Debug.LogError($"Requested some animation but it looks like we are missing an animator?! {anim.MainIcon.name}");
+            }
+            animationCoroutine = null;
         }
         [ContextMenu("Play Objective Audio")]
         public void OnObjectiveClicked()
