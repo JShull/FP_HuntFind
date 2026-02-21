@@ -27,6 +27,7 @@ namespace FuzzPhyte.Game.HuntFind
     public class FP_HuntFindObjectiveUI : MonoBehaviour
     {
         public FP_HuntFindRunner Runner;
+        public FPGameManager_HuntFind GameManager;
         public TextMeshProUGUI ObjectiveText;
         public Button ObjectiveButton;
         public AudioSource AudioSource;
@@ -128,6 +129,8 @@ namespace FuzzPhyte.Game.HuntFind
             }
 
             OnObjectiveClicked();
+            if (GameManager == null) return;
+            UpdateRemainingUI(GameManager.GetCurrentIndex,GameManager.ObjectiveSequence.Count);
         }
         public static Color InvertColor(Color color)
         {
@@ -159,7 +162,11 @@ namespace FuzzPhyte.Game.HuntFind
             if (NumberIndexRef == null) return;
             NumberIndexRef.text = index.ToString("{0:N0}") + NumberIndexGapDetails + maxOut.ToString("{0:N0}");
             if (NumberIndexFillRef == null) return;
-            float ratio = (float)index / (float)maxOut;
+            float ratio = (float)index / (float)maxOut-1;
+            if (ratio > 1)
+            {
+                ratio = 1;
+            }
             NumberIndexFillRef.fillAmount = ratio;
         }
         public void OnObjectiveClicked()
