@@ -93,6 +93,7 @@ namespace FuzzPhyte.Game.HuntFind
                     }
                     if (item.AnimatorUIItem != null)
                     {
+                        item.AnimatorUIItem.playbackTime = 0;
                         item.AnimatorUIItem.Play(item.AnimationState, item.AnimationLayer);
                         if (animationCoroutine != null)
                         {
@@ -100,14 +101,9 @@ namespace FuzzPhyte.Game.HuntFind
                         }
                         animationCoroutine = StartCoroutine(AnimationCoroutine(result));
                     }
+                    break;
                 }
-                else
-                { 
-                    if (item.AnimatorUIRef != null)
-                    {
-                        item.AnimatorUIRef.enabled = false;
-                    }
-                }
+                
             }
 
             OnObjectiveClicked();
@@ -117,8 +113,8 @@ namespace FuzzPhyte.Game.HuntFind
             yield return new WaitForSecondsRealtime(anim.AnimationDuration);
             if (anim.AnimatorUIItem != null)
             {
-                anim.AnimatorUIItem.StopPlayback();
                 anim.AnimatorUIItem.playbackTime = 0;
+                anim.AnimatorUIItem.StopPlayback();
                 anim.AnimatorUIRef.enabled = false;
             }
             else
