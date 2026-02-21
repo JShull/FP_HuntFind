@@ -37,6 +37,7 @@ namespace FuzzPhyte.Game.HuntFind
         [Space]
         public TextMeshProUGUI NumberIndexRef;
         public Image NumberIndexFillRef;
+        public string NumberIndexGapDetails = " | ";
         [Space]
         [Header("Icons")]
         public List<HuntFindUIInfo> HuntUIItems = new List<HuntFindUIInfo>();
@@ -156,7 +157,7 @@ namespace FuzzPhyte.Game.HuntFind
         public void UpdateRemainingUI(int index, int maxOut)
         {
             if (NumberIndexRef == null) return;
-            NumberIndexRef.text = index.ToString("{0:N0}") + "|" + maxOut.ToString("{0:N0}");
+            NumberIndexRef.text = index.ToString("{0:N0}") + NumberIndexGapDetails + maxOut.ToString("{0:N0}");
             if (NumberIndexFillRef == null) return;
             float ratio = (float)index / (float)maxOut;
             NumberIndexFillRef.fillAmount = ratio;
