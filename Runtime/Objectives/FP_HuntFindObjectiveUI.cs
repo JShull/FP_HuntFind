@@ -160,7 +160,7 @@ namespace FuzzPhyte.Game.HuntFind
         public void UpdateRemainingUI(int index, int maxOut)
         {
             if (NumberIndexRef == null) return;
-            NumberIndexRef.text = index.ToString("{0:N0}") + NumberIndexGapDetails + maxOut.ToString("{0:N0}");
+            NumberIndexRef.text = index.ToString() + NumberIndexGapDetails + maxOut.ToString();
             if (NumberIndexFillRef == null) return;
             float ratio = (float)index / (float)maxOut-1;
             if (ratio > 1)
