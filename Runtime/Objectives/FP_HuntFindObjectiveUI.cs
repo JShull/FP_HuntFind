@@ -15,6 +15,7 @@ namespace FuzzPhyte.Game.HuntFind
         public HuntObjectiveType HuntType;
         //public GameObject MainIcon;
         public Color UIColor;
+        public Color UIBackgroundColor;
         public Sprite UIIcon;
         public Animator AnimatorUIItem;
         public Image AnimatorUIRef;
@@ -29,6 +30,8 @@ namespace FuzzPhyte.Game.HuntFind
         public AudioSource AudioSource;
         protected Coroutine animationCoroutine;
         public Image ActionIconRef;
+        public Image ActionIconBackgroundRef;
+        public List<Image>OtherPanelRefs = new List<Image>();
         [Space]
         [Header("Icons")]
         //public GameObject HuntTypeActionIcon;
@@ -63,9 +66,8 @@ namespace FuzzPhyte.Game.HuntFind
             ObjectiveText.text = Runner.CurrentObjective.Instruction;
             //set icon
             //pull info
-            if (HuntUIItems.Count <= 0) return;
-            //go through list and find a match for the type
-
+            if (HuntUIItems.Count <= 0) return; 
+            if (ActionIconRef == null || ActionIconBackgroundRef == null) return;
 
             //go through the list and find a match for the type
             var result = HuntUIItems.FirstOrDefault(huntType => huntType.HuntType == Runner.CurrentObjective.ObjectiveData.Type);
@@ -77,6 +79,12 @@ namespace FuzzPhyte.Game.HuntFind
                     //set the color and sprite
                     ActionIconRef.sprite = item.UIIcon;
                     ActionIconRef.color = item.UIColor;
+                    for(int j=0;j< OtherPanelRefs.Count; j++)
+                    {
+                        var otherPanel = OtherPanelRefs[j];
+                        otherPanel.color = item.UIColor;
+                    }
+                    ActionIconBackgroundRef.color = item.UIBackgroundColor;
                     
                     if (item.AnimatorUIRef != null)
                     {
