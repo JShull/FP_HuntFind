@@ -35,6 +35,9 @@ namespace FuzzPhyte.Game.HuntFind
         public Image ActionIconBackgroundRef;
         public List<Image>OtherPanelRefs = new List<Image>();
         [Space]
+        public TextMeshProUGUI NumberIndexRef;
+        public Image NumberIndexFillRef;
+        [Space]
         [Header("Icons")]
         public List<HuntFindUIInfo> HuntUIItems = new List<HuntFindUIInfo>();
         public HuntFindUIInfo ActiveUIDetails;
@@ -149,7 +152,15 @@ namespace FuzzPhyte.Game.HuntFind
             }
             animationCoroutine = null;
         }
-        [ContextMenu("Play Objective Audio")]
+        
+        public void UpdateRemainingUI(int index, int maxOut)
+        {
+            if (NumberIndexRef == null) return;
+            NumberIndexRef.text = index.ToString("{0:N0}") + "|" + maxOut.ToString("{0:N0}");
+            if (NumberIndexFillRef == null) return;
+            float ratio = (float)index / (float)maxOut;
+            NumberIndexFillRef.fillAmount = ratio;
+        }
         public void OnObjectiveClicked()
         {
             Runner.PhrasePlayed();
