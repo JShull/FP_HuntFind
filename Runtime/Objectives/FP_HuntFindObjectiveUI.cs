@@ -82,7 +82,7 @@ namespace FuzzPhyte.Game.HuntFind
                     for(int j=0;j< OtherPanelRefs.Count; j++)
                     {
                         var otherPanel = OtherPanelRefs[j];
-                        otherPanel.color = item.UIColor;
+                        otherPanel.color = item.UIBackgroundColor;
                     }
                     ActionIconBackgroundRef.color = item.UIBackgroundColor;
                     
