@@ -98,6 +98,8 @@ namespace FuzzPhyte.Game.HuntFind
                             pressedColor = ObjectiveButton.colors.pressedColor,
                             selectedColor = ObjectiveButton.colors.selectedColor,
                             disabledColor = ObjectiveButton.colors.disabledColor,
+                            colorMultiplier = 1,
+                            fadeDuration = 0.1f
                         };
                     }
                     if (item.AnimatorUIRef != null)
