@@ -16,6 +16,7 @@ namespace FuzzPhyte.Game.HuntFind
         //public GameObject MainIcon;
         public Color UIColor;
         public Color UIBackgroundColor;
+        public Color TextColor;
         public Sprite UIIcon;
         public Animator AnimatorUIItem;
         public Image AnimatorUIRef;
@@ -86,7 +87,7 @@ namespace FuzzPhyte.Game.HuntFind
                     ActionIconBackgroundRef.color = item.UIBackgroundColor;
                     if (ObjectiveText != null)
                     {
-                        ObjectiveText.color = item.UIBackgroundColor;
+                        ObjectiveText.color = item.TextColor;
                     }
                     if (ObjectiveButton != null)
                     {
