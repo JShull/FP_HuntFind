@@ -13,7 +13,6 @@ namespace FuzzPhyte.Game.HuntFind
     {
         public int UniqueID;
         public HuntObjectiveType HuntType;
-        //public GameObject MainIcon;
         public Color UIColor;
         public Color UIBackgroundColor;
         public Color TextColor;
@@ -39,9 +38,11 @@ namespace FuzzPhyte.Game.HuntFind
         public TextMeshProUGUI NumberIndexRef;
         public Image NumberIndexFillRef;
         public string NumberIndexGapDetails = " | ";
+        protected int maxMatchIndex = 99;
         [Space]
         [Header("Icons")]
         public List<HuntFindUIInfo> HuntUIItems = new List<HuntFindUIInfo>();
+        public HuntFindUIInfo DefaultInfo;
         public HuntFindUIInfo ActiveUIDetails;
         public void OnEnable()
         {
@@ -59,7 +60,6 @@ namespace FuzzPhyte.Game.HuntFind
         }
         protected void OnObjectiveStarted(FP_HuntObjectiveState obj)
         {
-            
             Refresh();
         }
         public void Refresh()
@@ -80,49 +80,7 @@ namespace FuzzPhyte.Game.HuntFind
                 var item = HuntUIItems[i];
                 if (item.UniqueID == result.UniqueID)
                 {
-                    //set the color and sprite
-                    ActiveUIDetails=item;
-                    ActionIconRef.sprite = item.UIIcon;
-                    ActionIconRef.color = item.UIColor;
-                    for(int j=0;j< OtherPanelRefs.Count; j++)
-                    {
-                        var otherPanel = OtherPanelRefs[j];
-                        otherPanel.color = item.UIBackgroundColor;
-                    }
-                    ActionIconBackgroundRef.color = item.UIBackgroundColor;
-                    if (ObjectiveText != null)
-                    {
-                        ObjectiveText.color = item.TextColor;
-                    }
-                    if (ObjectiveButton != null)
-                    {
-                        //hover button color inverse of UIBackgroundColor
-                        ObjectiveButton.colors = new ColorBlock
-                        {
-                            normalColor = ObjectiveButton.colors.normalColor,
-                            highlightedColor = InvertColor(item.UIBackgroundColor),
-                            pressedColor = ObjectiveButton.colors.pressedColor,
-                            selectedColor = ObjectiveButton.colors.selectedColor,
-                            disabledColor = ObjectiveButton.colors.disabledColor,
-                            colorMultiplier = 1,
-                            fadeDuration = 0.1f
-                        };
-                    }
-                    if (item.AnimatorUIRef != null)
-                    {
-                        item.AnimatorUIRef.enabled = true;
-                        item.AnimatorUIRef.color = item.UIBackgroundColor;
-                    }
-                    if (item.AnimatorUIItem != null)
-                    {
-                        item.AnimatorUIItem.playbackTime = 0;
-                        item.AnimatorUIItem.Play(item.AnimationState, item.AnimationLayer);
-                        if (animationCoroutine != null)
-                        {
-                            StopCoroutine(animationCoroutine);
-                        }
-                        animationCoroutine = StartCoroutine(AnimationCoroutine(result));
-                    }
+                    UIVisualUpdates(item);
                     break;
                 }
                 
@@ -131,6 +89,59 @@ namespace FuzzPhyte.Game.HuntFind
             OnObjectiveClicked();
             if (GameManager == null) return;
             UpdateRemainingUI(GameManager.GetCurrentIndex,GameManager.ObjectiveSequence.Count);
+        }
+        protected void UIVisualUpdates(HuntFindUIInfo item)
+        {
+            ActiveUIDetails = item;
+            ActionIconRef.sprite = item.UIIcon;
+            ActionIconRef.color = item.UIColor;
+            for (int j = 0; j < OtherPanelRefs.Count; j++)
+            {
+                var otherPanel = OtherPanelRefs[j];
+                otherPanel.color = item.UIBackgroundColor;
+            }
+            ActionIconBackgroundRef.color = item.UIBackgroundColor;
+            if (ObjectiveText != null)
+            {
+                ObjectiveText.color = item.TextColor;
+            }
+            if (ObjectiveButton != null)
+            {
+                //hover button color inverse of UIBackgroundColor
+                ObjectiveButton.colors = new ColorBlock
+                {
+                    normalColor = ObjectiveButton.colors.normalColor,
+                    highlightedColor = InvertColor(item.UIBackgroundColor),
+                    pressedColor = ObjectiveButton.colors.pressedColor,
+                    selectedColor = ObjectiveButton.colors.selectedColor,
+                    disabledColor = ObjectiveButton.colors.disabledColor,
+                    colorMultiplier = 1,
+                    fadeDuration = 0.1f
+                };
+            }
+            if (item.AnimatorUIRef != null)
+            {
+                item.AnimatorUIRef.enabled = true;
+                item.AnimatorUIRef.color = item.UIBackgroundColor;
+            }
+            if (item.AnimatorUIItem != null)
+            {
+                item.AnimatorUIItem.playbackTime = 0;
+                item.AnimatorUIItem.Play(item.AnimationState, item.AnimationLayer);
+                if (animationCoroutine != null)
+                {
+                    StopCoroutine(animationCoroutine);
+                }
+                animationCoroutine = StartCoroutine(AnimationCoroutine(item));
+            }
+        }
+        public void FinishedGameScore(bool isWin)
+        {
+            if (isWin)
+            {
+                UpdateRemainingUI(maxMatchIndex, maxMatchIndex);
+                UIVisualUpdates(DefaultInfo);
+            }
         }
         public static Color InvertColor(Color color)
         {
@@ -159,6 +170,7 @@ namespace FuzzPhyte.Game.HuntFind
         
         public void UpdateRemainingUI(int index, int maxOut)
         {
+            maxMatchIndex = maxOut;
             if (NumberIndexRef == null) return;
             NumberIndexRef.text = index.ToString() + NumberIndexGapDetails + maxOut.ToString();
             if (NumberIndexFillRef == null) return;
