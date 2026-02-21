@@ -89,7 +89,7 @@ namespace FuzzPhyte.Game.HuntFind
                     if (item.AnimatorUIRef != null)
                     {
                         item.AnimatorUIRef.enabled = true;
-                        item.AnimatorUIRef.color = item.UIColor;
+                        item.AnimatorUIRef.color = item.UIBackgroundColor;
                     }
                     if (item.AnimatorUIItem != null)
                     {
