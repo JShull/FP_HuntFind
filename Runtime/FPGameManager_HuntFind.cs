@@ -16,6 +16,7 @@ namespace FuzzPhyte.Game.HuntFind
         protected bool pastFirstObjective = false;
         protected FP_HuntObjectiveState currentStateInstance;
         protected int currentIndex = 0;
+        public int GetCurrentIndex => currentIndex;
         [Tooltip("Event is triggered right at 0, we then use the delay to start the next objective")]
         public UnityEvent BeforeNextObjective;
 
