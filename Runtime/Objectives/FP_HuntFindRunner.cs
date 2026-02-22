@@ -9,7 +9,8 @@ namespace FuzzPhyte.Game.HuntFind
     {
         [Header("Active Objective")]
         public FP_HuntObjectiveState CurrentObjective;
-
+        public FP_HuntObjectiveState EndGameObjectiveFrench;
+        public FP_HuntObjectiveState EndGameObjectiveSpanish;
         public delegate void HuntObjectiveDelegate(FP_HuntObjectiveState obj);
         public event HuntObjectiveDelegate OnObjectiveStarted;
         public event HuntObjectiveDelegate OnObjectiveCompleted;
@@ -45,6 +46,23 @@ namespace FuzzPhyte.Game.HuntFind
                 Debug.Log("Phrase replayed.");
             }
         }
+        public void EndGameSetup(bool French)
+        {
+            if (French)
+            {
+                if (EndGameObjectiveFrench != null)
+                {
+                    CurrentObjective = EndGameObjectiveFrench;
+                }
+            }
+            else
+            {
+                if (EndGameObjectiveSpanish != null)
+                {
+                    CurrentObjective = EndGameObjectiveSpanish;
+                }
+            } 
+        }
         public void PlayInstructionAudio(AudioSource source)
         {
             if (CurrentObjective?.ObjectiveData?.Instruction?.WordAudio != null)
@@ -52,6 +70,7 @@ namespace FuzzPhyte.Game.HuntFind
                 source.PlayOneShot(CurrentObjective?.ObjectiveData?.Instruction?.WordAudio.AudioClip);
             }
         }
+        
         public void RegisterCorrectAction()
         {
             if (CurrentObjective == null) return;

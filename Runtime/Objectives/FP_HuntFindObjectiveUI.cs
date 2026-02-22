@@ -151,6 +151,7 @@ namespace FuzzPhyte.Game.HuntFind
             {
                 ObjectiveText.text = "juego terminado";
             }
+            Runner.EndGameSetup(French);
         }
         public static Color InvertColor(Color color)
         {
