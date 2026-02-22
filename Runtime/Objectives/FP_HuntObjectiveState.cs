@@ -56,7 +56,7 @@ namespace FuzzPhyte.Game.HuntFind
         {
             CurrentCount++;
 
-            if (CurrentCount >= RequiredCount)
+            if (CurrentCount == RequiredCount)
             {
                 if (!IsCompleted)
                 {

@@ -2,6 +2,7 @@ namespace FuzzPhyte.Game.HuntFind
 {
     using UnityEngine;
     using UnityEngine.Events;
+    using System.Collections;
     using FuzzPhyte.SystemEvent;
     using FuzzPhyte.Utility.EDU;
     public class FP_HuntFindRunner : MonoBehaviour
@@ -13,10 +14,20 @@ namespace FuzzPhyte.Game.HuntFind
         public event HuntObjectiveDelegate OnObjectiveStarted;
         public event HuntObjectiveDelegate OnObjectiveCompleted;
         public UnityEvent OnCorrectActionPerformed;
-        public void StartObjective(FP_HuntObjectiveState objective)
+        public void SetStartObjective(FP_HuntObjectiveState objective,float delayTime=1.5f)
+        {
+            CurrentObjective = objective;
+            StartCoroutine(DelayObjectiveStart(delayTime));
+        }
+        public void StartObjectiveImmediately(FP_HuntObjectiveState objective)
         {
             CurrentObjective = objective;
             OnObjectiveStarted?.Invoke(objective);
+        }
+        protected IEnumerator DelayObjectiveStart(float delay)
+        {
+            yield return new WaitForSecondsRealtime(delay);
+            OnObjectiveStarted?.Invoke(CurrentObjective);
         }
         
         public void PhrasePlayed()

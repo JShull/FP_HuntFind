@@ -12,6 +12,7 @@ namespace FuzzPhyte.Game.HuntFind
 
         [Tooltip("All objectives in order (linear progression)")]
         public List<FP_HuntObjectiveState> ObjectiveSequence = new List<FP_HuntObjectiveState>();
+        protected Dictionary<FP_HuntObjectiveState,int> objectiveTracker = new Dictionary<FP_HuntObjectiveState, int>();
         public float DelayBeforeNextObjective = 2f;
         protected bool pastFirstObjective = false;
         protected FP_HuntObjectiveState currentStateInstance;
@@ -62,21 +63,17 @@ namespace FuzzPhyte.Game.HuntFind
             BeforeNextObjective?.Invoke();
             if (!pastFirstObjective)
             {
-                HuntRunner.StartObjective(currentStateInstance);
+                HuntRunner.StartObjectiveImmediately(currentStateInstance);
                 Debug.Log($"Started Objective #{currentIndex + 1}: {currentStateInstance.Instruction}");
                 pastFirstObjective = true;
             }
             else
             {
-                StartCoroutine(DelayNextObjective());
+                //StartCoroutine(DelayNextObjective());
+                HuntRunner.SetStartObjective(currentStateInstance, DelayBeforeNextObjective);
                 Debug.Log($"Started Objective #{currentIndex + 1}: {currentStateInstance.Instruction}");
             }
            
-        }
-        IEnumerator DelayNextObjective()
-        {
-            yield return new WaitForSecondsRealtime(DelayBeforeNextObjective);
-            HuntRunner.StartObjective(currentStateInstance);
         }
         #endregion
 
