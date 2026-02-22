@@ -39,6 +39,7 @@ namespace FuzzPhyte.Game.HuntFind
         public Image NumberIndexFillRef;
         public string NumberIndexGapDetails = " | ";
         protected int maxMatchIndex = 99;
+        public bool French = true;
         [Space]
         [Header("Icons")]
         public List<HuntFindUIInfo> HuntUIItems = new List<HuntFindUIInfo>();
@@ -141,6 +142,14 @@ namespace FuzzPhyte.Game.HuntFind
             {
                 UpdateRemainingUI(maxMatchIndex, maxMatchIndex);
                 UIVisualUpdates(DefaultInfo);
+            }
+            if (French)
+            {
+                ObjectiveText.text = "jeu terminé";
+            }
+            else
+            {
+                ObjectiveText.text = "juego terminado";
             }
         }
         public static Color InvertColor(Color color)
